@@ -15,8 +15,8 @@ def main():
     # NBA データマネージャーのインスタンス化
     nba_manager = NBADataManager()
     
-    # サイドバーでページ選択
-    page = st.sidebar.selectbox(
+    # ページ選択を上部に移動
+    page = st.selectbox(
         "ページを選択",
         ["チームレーティング", "チーム別選手", "選手検索", "全選手レーティング"]
     )
