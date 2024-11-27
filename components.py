@@ -5,19 +5,9 @@ def display_team_ratings(nba_manager):
     """チームレーティングの表示"""
     team_ratings = nba_manager.get_team_ratings()
     
-    # ソート用のボタン
-    cols = st.columns(4)
-    sort_col = None
-    if cols[1].button("OFF RATING"):
-        sort_col = "OFF_RATING"
-    elif cols[2].button("DEF RATING"):
-        sort_col = "DEF_RATING"
-    elif cols[3].button("NET RATING"):
-        sort_col = "NET_RATING"
-        
-    # データのソートと表示
+    # データの表示
     if not team_ratings.empty:
-        sorted_ratings = sort_dataframe(team_ratings, sort_col)
+        sorted_ratings = sort_dataframe(team_ratings, None)
         st.dataframe(sorted_ratings, use_container_width=True)
     else:
         st.warning("表示できるチームデータがありません。")
@@ -33,19 +23,9 @@ def display_team_players(nba_manager):
             try:
                 team_players = nba_manager.get_player_ratings(team_name=selected_team)
                 
-                # ソート用のボタン
-                cols = st.columns(4)
-                sort_col = None
-                if cols[1].button("OFF RATING"):
-                    sort_col = "OFF_RATING"
-                elif cols[2].button("DEF RATING"):
-                    sort_col = "DEF_RATING"
-                elif cols[3].button("NET RATING"):
-                    sort_col = "NET_RATING"
-                    
-                # データのソートと表示
+                # データの表示
                 if not team_players.empty:
-                    sorted_players = sort_dataframe(team_players, sort_col)
+                    sorted_players = sort_dataframe(team_players, None)
                     st.dataframe(sorted_players, use_container_width=True)
                 else:
                     st.warning(f"{selected_team}の選手データが見つかりませんでした。")
@@ -66,34 +46,14 @@ def display_player_search(nba_manager):
     if any(search_names):
         results = nba_manager.search_players(search_names)
         
-        # ソート用のボタン
-        cols = st.columns(4)
-        sort_col = None
-        if cols[1].button("OFF RATING"):
-            sort_col = "OFF_RATING"
-        elif cols[2].button("DEF RATING"):
-            sort_col = "DEF_RATING"
-        elif cols[3].button("NET RATING"):
-            sort_col = "NET_RATING"
-            
-        # データのソートと表示
-        sorted_results = sort_dataframe(results, sort_col)
+        # データの表示
+        sorted_results = sort_dataframe(results, None)
         st.dataframe(sorted_results, use_container_width=True)
 
 def display_all_players(nba_manager):
     """全選手レーティングの表示"""
     all_players = nba_manager.get_player_ratings(min_games=5)
     
-    # ソート用のボタン
-    cols = st.columns(4)
-    sort_col = None
-    if cols[1].button("OFF RATING"):
-        sort_col = "OFF_RATING"
-    elif cols[2].button("DEF RATING"):
-        sort_col = "DEF_RATING"
-    elif cols[3].button("NET RATING"):
-        sort_col = "NET_RATING"
-        
-    # データのソートと表示
-    sorted_players = sort_dataframe(all_players, sort_col)
+    # データの表示
+    sorted_players = sort_dataframe(all_players, None)
     st.dataframe(sorted_players, use_container_width=True)
