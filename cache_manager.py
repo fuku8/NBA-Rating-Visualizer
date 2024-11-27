@@ -18,12 +18,17 @@ def cache_data(expire_time=3600):
             
             # キャッシュの確認
             if os.path.exists(cache_file):
-                with open(cache_file, 'rb') as f:
-                    cached_data = pickle.load(f)
+                try:
+                    with open(cache_file, 'rb') as f:
+                        cached_data = pickle.load(f)
                     
-                # キャッシュの有効期限チェック
-                if time.time() - cached_data['timestamp'] < expire_time:
-                    return cached_data['data']
+                    # キャッシュの有効期限チェック
+                    if time.time() - cached_data['timestamp'] < expire_time:
+                        return cached_data['data']
+                except (EOFError, pickle.PickleError, KeyError) as e:
+                    # キャッシュファイルが破損している場合は削除
+                    os.remove(cache_file)
+                    print(f"破損したキャッシュファイルを削除しました: {cache_file}")
             
             # 新しいデータの取得
             data = func(*args, **kwargs)

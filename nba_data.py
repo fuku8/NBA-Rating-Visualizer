@@ -21,12 +21,20 @@ class NBADataManager:
     @cache_data(expire_time=3600)  # 1時間キャッシュ
     def get_team_ratings(self):
         """チームのレーティングデータを取得"""
-        team_stats = leaguedashteamstats.LeagueDashTeamStats(
-            season=self.season,
-            measure_type_detailed_defense='Advanced'
-        ).get_data_frames()[0]
-        
-        return team_stats[['TEAM_NAME', 'OFF_RATING', 'DEF_RATING', 'NET_RATING']]
+        try:
+            team_stats = leaguedashteamstats.LeagueDashTeamStats(
+                season=self.season,
+                measure_type_detailed_defense='Advanced'
+            ).get_data_frames()[0]
+            
+            if team_stats.empty:
+                st.error("チームデータの取得に失敗しました。")
+                return pd.DataFrame(columns=['TEAM_NAME', 'OFF_RATING', 'DEF_RATING', 'NET_RATING'])
+            
+            return team_stats[['TEAM_NAME', 'OFF_RATING', 'DEF_RATING', 'NET_RATING']]
+        except Exception as e:
+            st.error(f"チームデータの取得中にエラーが発生しました: {str(e)}")
+            return pd.DataFrame(columns=['TEAM_NAME', 'OFF_RATING', 'DEF_RATING', 'NET_RATING'])
     
     @cache_data(expire_time=3600)
     def get_player_ratings(self, team_name=None, min_games=5):

@@ -16,8 +16,11 @@ def display_team_ratings(nba_manager):
         sort_col = "NET_RATING"
         
     # データのソートと表示
-    sorted_ratings = sort_dataframe(team_ratings, sort_col)
-    st.dataframe(sorted_ratings, use_container_width=True)
+    if not team_ratings.empty:
+        sorted_ratings = sort_dataframe(team_ratings, sort_col)
+        st.dataframe(sorted_ratings, use_container_width=True)
+    else:
+        st.warning("表示できるチームデータがありません。")
 
 def display_team_players(nba_manager):
     """チーム別選手レーティングの表示"""
