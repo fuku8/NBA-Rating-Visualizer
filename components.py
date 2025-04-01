@@ -52,7 +52,7 @@ def display_player_search(nba_manager):
 
 def display_all_players(nba_manager):
     """全選手レーティングの表示"""
-    all_players = nba_manager.get_player_ratings(min_games=5)
+    all_players = nba_manager.get_player_ratings(min_games=20)
     
     # データの表示
     sorted_players = sort_dataframe(all_players, None)
