@@ -37,7 +37,7 @@ class NBADataManager:
             return pd.DataFrame(columns=['TEAM_NAME', 'OFF_RATING', 'DEF_RATING', 'NET_RATING'])
     
     @cache_data(expire_time=3600)
-    def get_player_ratings(self, team_name=None, min_games=5):
+    def get_player_ratings(self, team_name=None, min_games=20):
         """選手のレーティングデータを取得"""
         try:
             player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
@@ -55,7 +55,7 @@ class NBADataManager:
                 else:
                     raise ValueError(f"チーム '{team_name}' が見つかりませんでした。")
             
-            return filtered_stats[['PLAYER_NAME', 'TEAM_ABBREVIATION', 
+            return filtered_stats[['PLAYER_NAME', 
                                 'OFF_RATING', 'DEF_RATING', 'NET_RATING', 'GP']]
                                 
         except Exception as e:
