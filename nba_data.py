@@ -6,7 +6,7 @@ import streamlit as st
 
 class NBADataManager:
     def __init__(self):
-        self.season = "2024-25"
+        self.season = "2025-26"
         self._teams = teams.get_teams()
         
     def get_team_id(self, team_name):
