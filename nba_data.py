@@ -18,18 +18,8 @@ custom_headers = {
 }
 NBAStatsHTTP.get_headers = lambda self: custom_headers
 
-# リクエストのタイムアウトを延長するためのパッチ
-from nba_api.stats.library import http as nba_http
-import requests
-
-original_get = requests.get
-
-def patched_requests_get(*args, **kwargs):
-    # タイムアウトを120秒に設定
-    kwargs['timeout'] = 120
-    return original_get(*args, **kwargs)
-
-nba_http.requests.get = patched_requests_get
+# タイムアウトを延長するため、NBAStatsHTTPクラスのタイムアウト設定を変更
+NBAStatsHTTP.timeout = 120
 
 # データ取得処理を関数として分離し、Streamlitのキャッシュを適用
 @st.cache_data(ttl=3600)
