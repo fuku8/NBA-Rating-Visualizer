@@ -18,8 +18,16 @@ custom_headers = {
 }
 NBAStatsHTTP.get_headers = lambda self: custom_headers
 
-# タイムアウトを延長するため、NBAStatsHTTPクラスのタイムアウト設定を変更
-NBAStatsHTTP.timeout = 120
+# タイムアウトを延長するため、NBAStatsHTTPクラスのsend_api_requestメソッドをオーバーライド
+import requests
+
+original_send_api_request = NBAStatsHTTP.send_api_request
+
+def custom_send_api_request(self, endpoint, parameters, referer=None, proxy=None, headers=None, timeout=120):
+    """タイムアウトを120秒に設定したカスタムリクエスト"""
+    return original_send_api_request(self, endpoint, parameters, referer, proxy, headers, timeout)
+
+NBAStatsHTTP.send_api_request = custom_send_api_request
 
 # データ取得処理を関数として分離し、Streamlitのキャッシュを適用
 @st.cache_data(ttl=3600)
