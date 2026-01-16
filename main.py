@@ -1,5 +1,5 @@
 import streamlit as st
-from nba_data import NBADataManager
+from nba_data_static import NBADataManager
 from components import (
     display_team_ratings,
     display_team_players,
@@ -12,8 +12,11 @@ def main():
     # ページの初期設定
     setup_page()
     
-    # NBA データマネージャーのインスタンス化
-    nba_manager = NBADataManager()
+    # NBA データマネージャーのインスタンス化（静的データを使用）
+    nba_manager = NBADataManager(use_static_data=True)
+    
+    # データ更新日時を表示
+    st.sidebar.info(f"📅 データ更新日時: {nba_manager.get_last_updated()}")
     
     # ページ選択を上部に移動
     page = st.selectbox(

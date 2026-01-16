@@ -1,27 +1,86 @@
-# NBA Player and Team Analysis Dashboard
+# NBA Rating Visualizer
 
-This project is a Streamlit application that displays NBA player and team statistics, allowing users to analyze and compare various performance metrics.
+NBAチームと選手のレーティング（オフェンス・ディフェンス・ネット）を可視化するStreamlitアプリケーション。
 
-## Features
+## 特徴
 
-*   **Team Ratings:** Displays a sortable list of all NBA teams with their Offensive Rating, Defensive Rating, and Net Rating.
-*   **Team-Specific Player Ratings:** Allows users to select an NBA team and view the ratings (Offensive, Defensive, Net) and Games Played (GP) for all players on that team.
-*   **Player Search:** Provides up to five input fields to search for specific players by name across the league and displays their ratings.
-*   **All Player Ratings:** Shows a sortable list of all players in the league (who have played a minimum number of games) with their Offensive Rating, Defensive Rating, and Net Rating.
+- **チームレーティング**: 全30チームのオフェンス/ディフェンス/ネットレーティングを表示
+- **チーム別選手**: 各チームの選手レーティングを表示
+- **選手検索**: 選手名で検索してレーティングを確認
+- **全選手レーティング**: 全選手のレーティング一覧（最低出場試合数でフィルタリング可能）
 
-## How to Run
+## データ更新
 
-1.  Ensure you have Python and pip installed.
-2.  Install Streamlit and other dependencies:
-    ```bash
-    pip install streamlit pandas nba_api
-    ```
-3.  Navigate to the project's root directory in your terminal.
-4.  Run the application:
-    ```bash
-    streamlit run main.py
-    ```
+このアプリは静的データ方式を採用しています。データは以下の方法で自動更新されます：
 
-## Data Source
+### 自動更新（GitHub Actions）
+- **毎日午前9時（日本時間）**に自動的にデータが更新されます
+- GitHub Actionsが`fetch_data.py`を実行し、最新データを取得
+- 更新されたデータは自動的にリポジトリにコミット・プッシュされます
+- Streamlit Cloudが変更を検知して自動的に再デプロイします
 
-The application fetches NBA statistics using the [nba_api](https://github.com/swar/nba_api) Python library, which interfaces with stats.nba.com.
+### 手動更新
+必要に応じて手動でデータを更新することも可能です：
+
+```bash
+# ローカルで実行
+python fetch_data.py
+
+# GitHubにプッシュ
+git add data/
+git commit -m "Update NBA data"
+git push
+```
+
+または、GitHubのActionsタブから「Update NBA Data」ワークフローを手動実行できます。
+
+## セットアップ
+
+### ローカル環境
+
+```bash
+# 依存関係のインストール
+pip install -r requirements.txt
+
+# 初回データ取得
+python fetch_data.py
+
+# アプリ起動
+streamlit run main.py
+```
+
+### Streamlit Cloudへのデプロイ
+
+1. このリポジトリをGitHubにプッシュ
+2. [Streamlit Cloud](https://streamlit.io/cloud)にアクセス
+3. リポジトリを選択してデプロイ
+4. 自動的に`data/`ディレクトリのCSVファイルが読み込まれます
+
+## 技術スタック
+
+- **Streamlit**: Webアプリケーションフレームワーク
+- **nba_api**: NBA公式データAPI
+- **Pandas**: データ処理
+- **GitHub Actions**: 自動データ更新
+
+## ファイル構成
+
+```
+.
+├── main.py                 # メインアプリケーション
+├── nba_data_static.py      # 静的データマネージャー
+├── components.py           # UI コンポーネント
+├── utils.py               # ユーティリティ関数
+├── fetch_data.py          # データ取得スクリプト
+├── data/                  # データディレクトリ
+│   ├── team_ratings.csv   # チームレーティングデータ
+│   ├── player_ratings.csv # 選手レーティングデータ
+│   └── last_updated.txt   # 最終更新日時
+└── .github/
+    └── workflows/
+        └── update_data.yml # 自動更新ワークフロー
+```
+
+## ライセンス
+
+MIT License
