@@ -5,6 +5,8 @@ def display_team_ratings(nba_manager):
     team_ratings = nba_manager.get_team_ratings()
     
     if not team_ratings.empty:
+        # インデックスを1から開始
+        team_ratings.index = range(1, len(team_ratings) + 1)
         st.dataframe(
             team_ratings, 
             use_container_width=True,
@@ -27,6 +29,8 @@ def display_team_players(nba_manager):
             team_players = nba_manager.get_player_ratings(team_name=selected_team)
             
             if not team_players.empty:
+                # インデックスを1から開始
+                team_players.index = range(1, len(team_players) + 1)
                 st.dataframe(
                     team_players, 
                     use_container_width=True,
@@ -58,6 +62,8 @@ def display_player_search(nba_manager):
         results = nba_manager.search_players(search_names)
         
         if not results.empty:
+            # インデックスを1から開始
+            results.index = range(1, len(results) + 1)
             st.dataframe(results, use_container_width=True)
         else:
             st.warning("該当する選手が見つかりませんでした。")
@@ -69,6 +75,8 @@ def display_all_players(nba_manager):
     all_players = nba_manager.get_player_ratings(min_games=20)
     
     if not all_players.empty:
+        # インデックスを1から開始
+        all_players.index = range(1, len(all_players) + 1)
         st.dataframe(
             all_players, 
             use_container_width=True,

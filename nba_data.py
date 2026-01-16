@@ -28,7 +28,8 @@ def fetch_team_ratings(season):
             # measure_type_detailed_defense='Advanced'を指定してOffRtg/DefRtgを取得
             stats = leaguedashteamstats.LeagueDashTeamStats(
                 season=season,
-                measure_type_detailed_defense='Advanced'
+                measure_type_detailed_defense='Advanced',
+                league_id_nullable='00'
             )
             return stats.get_data_frames()[0]
         except Exception as e:
@@ -47,7 +48,8 @@ def fetch_player_ratings(season, min_games):
         try:
             stats = leaguedashplayerstats.LeagueDashPlayerStats(
                 season=season,
-                measure_type_detailed_defense='Advanced'
+                measure_type_detailed_defense='Advanced',
+                league_id_nullable='00'
             )
             df = stats.get_data_frames()[0]
             # 試合数フィルター
