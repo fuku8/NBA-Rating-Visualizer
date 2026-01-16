@@ -8,7 +8,7 @@ from datetime import datetime
 
 def fetch_and_save_data():
     """データを取得してCSVファイルに保存"""
-    season = "2024-25"  # 現在のシーズン
+    season = "2025-26"  # 現在のシーズン
     
     print("チームデータを取得中...")
     try:

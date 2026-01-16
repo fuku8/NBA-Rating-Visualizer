@@ -11,7 +11,7 @@ class NBADataManager:
                            Falseの場合、APIから直接取得（ローカル開発用）
         """
         self.use_static_data = use_static_data
-        self.season = "2024-25"
+        self.season = "2025-26"
         self._teams = teams.get_teams()
         
         if use_static_data:
