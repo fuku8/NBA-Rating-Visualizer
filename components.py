@@ -5,30 +5,14 @@ def display_team_ratings(nba_manager):
     team_ratings = nba_manager.get_team_ratings()
 
     if not team_ratings.empty:
-        # ソート機能
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            sort_column = st.selectbox(
-                "並び替え",
-                options=team_ratings.columns.tolist(),
-                key="team_ratings_sort_col"
-            )
-        with col2:
-            sort_order = st.radio("順序", ["降順", "昇順"], horizontal=True, key="team_ratings_sort_order")
-
-        # ソート実行
-        ascending = (sort_order == "昇順")
-        team_ratings_sorted = team_ratings.sort_values(by=sort_column, ascending=ascending)
-
-        # ソート後に行数番号列を追加
-        team_ratings_sorted.insert(0, 'No.', range(1, len(team_ratings_sorted) + 1))
+        # 行番号をインデックスとして設定（1から開始）
+        team_ratings.index = range(1, len(team_ratings) + 1)
+        team_ratings.index.name = 'No.'
 
         st.dataframe(
-            team_ratings_sorted,
+            team_ratings,
             use_container_width=True,
-            hide_index=True,
             column_config={
-                "No.": st.column_config.NumberColumn("No.", width="small"),
                 "OFF_RATING": st.column_config.NumberColumn("Off Rtg", format="%.1f"),
                 "DEF_RATING": st.column_config.NumberColumn("Def Rtg", format="%.1f"),
                 "NET_RATING": st.column_config.NumberColumn("Net Rtg", format="%.1f"),
@@ -47,30 +31,14 @@ def display_team_players(nba_manager):
             team_players = nba_manager.get_player_ratings(team_name=selected_team)
 
             if not team_players.empty:
-                # ソート機能
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    sort_column = st.selectbox(
-                        "並び替え",
-                        options=team_players.columns.tolist(),
-                        key="team_players_sort_col"
-                    )
-                with col2:
-                    sort_order = st.radio("順序", ["降順", "昇順"], horizontal=True, key="team_players_sort_order")
-
-                # ソート実行
-                ascending = (sort_order == "昇順")
-                team_players_sorted = team_players.sort_values(by=sort_column, ascending=ascending)
-
-                # ソート後に行数番号列を追加
-                team_players_sorted.insert(0, 'No.', range(1, len(team_players_sorted) + 1))
+                # 行番号をインデックスとして設定（1から開始）
+                team_players.index = range(1, len(team_players) + 1)
+                team_players.index.name = 'No.'
 
                 st.dataframe(
-                    team_players_sorted,
+                    team_players,
                     use_container_width=True,
-                    hide_index=True,
                     column_config={
-                        "No.": st.column_config.NumberColumn("No.", width="small"),
                         "OFF_RATING": st.column_config.NumberColumn("Off Rtg", format="%.1f"),
                         "DEF_RATING": st.column_config.NumberColumn("Def Rtg", format="%.1f"),
                         "NET_RATING": st.column_config.NumberColumn("Net Rtg", format="%.1f"),
@@ -98,32 +66,11 @@ def display_player_search(nba_manager):
         results = nba_manager.search_players(search_names)
 
         if not results.empty:
-            # ソート機能
-            col1, col2 = st.columns([3, 1])
-            with col1:
-                sort_column = st.selectbox(
-                    "並び替え",
-                    options=results.columns.tolist(),
-                    key="player_search_sort_col"
-                )
-            with col2:
-                sort_order = st.radio("順序", ["降順", "昇順"], horizontal=True, key="player_search_sort_order")
+            # 行番号をインデックスとして設定（1から開始）
+            results.index = range(1, len(results) + 1)
+            results.index.name = 'No.'
 
-            # ソート実行
-            ascending = (sort_order == "昇順")
-            results_sorted = results.sort_values(by=sort_column, ascending=ascending)
-
-            # ソート後に行数番号列を追加
-            results_sorted.insert(0, 'No.', range(1, len(results_sorted) + 1))
-
-            st.dataframe(
-                results_sorted,
-                use_container_width=True,
-                hide_index=True,
-                column_config={
-                    "No.": st.column_config.NumberColumn("No.", width="small"),
-                }
-            )
+            st.dataframe(results, use_container_width=True)
         else:
             st.warning("該当する選手が見つかりませんでした。")
 
@@ -134,30 +81,14 @@ def display_all_players(nba_manager):
     all_players = nba_manager.get_player_ratings(min_games=20)
 
     if not all_players.empty:
-        # ソート機能
-        col1, col2 = st.columns([3, 1])
-        with col1:
-            sort_column = st.selectbox(
-                "並び替え",
-                options=all_players.columns.tolist(),
-                key="all_players_sort_col"
-            )
-        with col2:
-            sort_order = st.radio("順序", ["降順", "昇順"], horizontal=True, key="all_players_sort_order")
-
-        # ソート実行
-        ascending = (sort_order == "昇順")
-        all_players_sorted = all_players.sort_values(by=sort_column, ascending=ascending)
-
-        # ソート後に行数番号列を追加
-        all_players_sorted.insert(0, 'No.', range(1, len(all_players_sorted) + 1))
+        # 行番号をインデックスとして設定（1から開始）
+        all_players.index = range(1, len(all_players) + 1)
+        all_players.index.name = 'No.'
 
         st.dataframe(
-            all_players_sorted,
+            all_players,
             use_container_width=True,
-            hide_index=True,
             column_config={
-                "No.": st.column_config.NumberColumn("No.", width="small"),
                 "OFF_RATING": st.column_config.NumberColumn("Off Rtg", format="%.1f"),
                 "DEF_RATING": st.column_config.NumberColumn("Def Rtg", format="%.1f"),
                 "NET_RATING": st.column_config.NumberColumn("Net Rtg", format="%.1f"),
