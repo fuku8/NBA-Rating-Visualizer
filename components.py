@@ -1,22 +1,51 @@
 import streamlit as st
+from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, JsCode
 
 def display_team_ratings(nba_manager):
     """チームレーティングの表示"""
     team_ratings = nba_manager.get_team_ratings()
 
     if not team_ratings.empty:
-        # 行番号をインデックスとして設定（1から開始）
-        team_ratings.index = range(1, len(team_ratings) + 1)
-        team_ratings.index.name = 'No.'
+        # 行番号列を先頭に追加
+        team_ratings.insert(0, 'No.', range(1, len(team_ratings) + 1))
 
-        st.dataframe(
+        # AG Grid設定
+        gb = GridOptionsBuilder.from_dataframe(team_ratings)
+
+        # 行番号列の設定（ソート後も1から順に表示）
+        row_number_jscode = JsCode("""
+        function(params) {
+            return params.node.rowIndex + 1;
+        }
+        """)
+
+        gb.configure_column(
+            "No.",
+            headerName="No.",
+            valueGetter=row_number_jscode,
+            lockPosition=True,
+            sortable=False,
+            width=80,
+            suppressMovable=True
+        )
+
+        # 他の列の設定
+        gb.configure_default_column(sortable=True, filterable=True)
+
+        # 数値フォーマット設定
+        gb.configure_column("OFF_RATING", header_name="Off Rtg", type=["numericColumn"], precision=1)
+        gb.configure_column("DEF_RATING", header_name="Def Rtg", type=["numericColumn"], precision=1)
+        gb.configure_column("NET_RATING", header_name="Net Rtg", type=["numericColumn"], precision=1)
+
+        gridOptions = gb.build()
+
+        AgGrid(
             team_ratings,
-            use_container_width=True,
-            column_config={
-                "OFF_RATING": st.column_config.NumberColumn("Off Rtg", format="%.1f"),
-                "DEF_RATING": st.column_config.NumberColumn("Def Rtg", format="%.1f"),
-                "NET_RATING": st.column_config.NumberColumn("Net Rtg", format="%.1f"),
-            }
+            gridOptions=gridOptions,
+            update_mode=GridUpdateMode.NO_UPDATE,
+            fit_columns_on_grid_load=True,
+            height=500,
+            enable_enterprise_modules=False,
         )
     else:
         st.warning("表示できるチームデータがありません。")
@@ -31,18 +60,46 @@ def display_team_players(nba_manager):
             team_players = nba_manager.get_player_ratings(team_name=selected_team)
 
             if not team_players.empty:
-                # 行番号をインデックスとして設定（1から開始）
-                team_players.index = range(1, len(team_players) + 1)
-                team_players.index.name = 'No.'
+                # 行番号列を先頭に追加
+                team_players.insert(0, 'No.', range(1, len(team_players) + 1))
 
-                st.dataframe(
+                # AG Grid設定
+                gb = GridOptionsBuilder.from_dataframe(team_players)
+
+                # 行番号列の設定（ソート後も1から順に表示）
+                row_number_jscode = JsCode("""
+                function(params) {
+                    return params.node.rowIndex + 1;
+                }
+                """)
+
+                gb.configure_column(
+                    "No.",
+                    headerName="No.",
+                    valueGetter=row_number_jscode,
+                    lockPosition=True,
+                    sortable=False,
+                    width=80,
+                    suppressMovable=True
+                )
+
+                # 他の列の設定
+                gb.configure_default_column(sortable=True, filterable=True)
+
+                # 数値フォーマット設定
+                gb.configure_column("OFF_RATING", header_name="Off Rtg", type=["numericColumn"], precision=1)
+                gb.configure_column("DEF_RATING", header_name="Def Rtg", type=["numericColumn"], precision=1)
+                gb.configure_column("NET_RATING", header_name="Net Rtg", type=["numericColumn"], precision=1)
+
+                gridOptions = gb.build()
+
+                AgGrid(
                     team_players,
-                    use_container_width=True,
-                    column_config={
-                        "OFF_RATING": st.column_config.NumberColumn("Off Rtg", format="%.1f"),
-                        "DEF_RATING": st.column_config.NumberColumn("Def Rtg", format="%.1f"),
-                        "NET_RATING": st.column_config.NumberColumn("Net Rtg", format="%.1f"),
-                    }
+                    gridOptions=gridOptions,
+                    update_mode=GridUpdateMode.NO_UPDATE,
+                    fit_columns_on_grid_load=True,
+                    height=500,
+                    enable_enterprise_modules=False,
                 )
             else:
                 st.warning(f"{selected_team}の選手データが見つかりませんでした。")
@@ -66,11 +123,42 @@ def display_player_search(nba_manager):
         results = nba_manager.search_players(search_names)
 
         if not results.empty:
-            # 行番号をインデックスとして設定（1から開始）
-            results.index = range(1, len(results) + 1)
-            results.index.name = 'No.'
+            # 行番号列を先頭に追加
+            results.insert(0, 'No.', range(1, len(results) + 1))
 
-            st.dataframe(results, use_container_width=True)
+            # AG Grid設定
+            gb = GridOptionsBuilder.from_dataframe(results)
+
+            # 行番号列の設定（ソート後も1から順に表示）
+            row_number_jscode = JsCode("""
+            function(params) {
+                return params.node.rowIndex + 1;
+            }
+            """)
+
+            gb.configure_column(
+                "No.",
+                headerName="No.",
+                valueGetter=row_number_jscode,
+                lockPosition=True,
+                sortable=False,
+                width=80,
+                suppressMovable=True
+            )
+
+            # 他の列の設定
+            gb.configure_default_column(sortable=True, filterable=True)
+
+            gridOptions = gb.build()
+
+            AgGrid(
+                results,
+                gridOptions=gridOptions,
+                update_mode=GridUpdateMode.NO_UPDATE,
+                fit_columns_on_grid_load=True,
+                height=500,
+                enable_enterprise_modules=False,
+            )
         else:
             st.warning("該当する選手が見つかりませんでした。")
 
@@ -81,16 +169,44 @@ def display_all_players(nba_manager):
     all_players = nba_manager.get_player_ratings(min_games=20)
 
     if not all_players.empty:
-        # 行番号をインデックスとして設定（1から開始）
-        all_players.index = range(1, len(all_players) + 1)
-        all_players.index.name = 'No.'
+        # 行番号列を先頭に追加
+        all_players.insert(0, 'No.', range(1, len(all_players) + 1))
 
-        st.dataframe(
+        # AG Grid設定
+        gb = GridOptionsBuilder.from_dataframe(all_players)
+
+        # 行番号列の設定（ソート後も1から順に表示）
+        row_number_jscode = JsCode("""
+        function(params) {
+            return params.node.rowIndex + 1;
+        }
+        """)
+
+        gb.configure_column(
+            "No.",
+            headerName="No.",
+            valueGetter=row_number_jscode,
+            lockPosition=True,
+            sortable=False,
+            width=80,
+            suppressMovable=True
+        )
+
+        # 他の列の設定
+        gb.configure_default_column(sortable=True, filterable=True)
+
+        # 数値フォーマット設定
+        gb.configure_column("OFF_RATING", header_name="Off Rtg", type=["numericColumn"], precision=1)
+        gb.configure_column("DEF_RATING", header_name="Def Rtg", type=["numericColumn"], precision=1)
+        gb.configure_column("NET_RATING", header_name="Net Rtg", type=["numericColumn"], precision=1)
+
+        gridOptions = gb.build()
+
+        AgGrid(
             all_players,
-            use_container_width=True,
-            column_config={
-                "OFF_RATING": st.column_config.NumberColumn("Off Rtg", format="%.1f"),
-                "DEF_RATING": st.column_config.NumberColumn("Def Rtg", format="%.1f"),
-                "NET_RATING": st.column_config.NumberColumn("Net Rtg", format="%.1f"),
-            }
+            gridOptions=gridOptions,
+            update_mode=GridUpdateMode.NO_UPDATE,
+            fit_columns_on_grid_load=True,
+            height=500,
+            enable_enterprise_modules=False,
         )
