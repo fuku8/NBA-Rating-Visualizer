@@ -1,52 +1,58 @@
 import streamlit as st
-from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode, JsCode
 
 def display_team_ratings(nba_manager):
     """チームレーティングの表示"""
     team_ratings = nba_manager.get_team_ratings()
 
     if not team_ratings.empty:
-        # 行番号列を先頭に追加
-        team_ratings.insert(0, 'No.', range(1, len(team_ratings) + 1))
+        # session_stateの初期化
+        if 'team_ratings_sort_col' not in st.session_state:
+            st.session_state.team_ratings_sort_col = team_ratings.columns[0]
+        if 'team_ratings_ascending' not in st.session_state:
+            st.session_state.team_ratings_ascending = False
 
-        # AG Grid設定
-        gb = GridOptionsBuilder.from_dataframe(team_ratings)
-
-        # 行番号列の設定（ソート後も1から順に表示）
-        row_number_jscode = JsCode("""
-        function(params) {
-            return params.node.rowIndex + 1;
-        }
-        """)
-
-        gb.configure_column(
-            "No.",
-            headerName="No.",
-            valueGetter=row_number_jscode,
-            lockPosition=True,
-            sortable=False,
-            width=80,
-            suppressMovable=True
+        # ソート機能
+        st.write("**並び替え列を選択:**")
+        sort_column = st.radio(
+            "並び替え列",
+            options=team_ratings.columns.tolist(),
+            horizontal=True,
+            key="team_ratings_radio",
+            label_visibility="collapsed"
         )
 
-        # 他の列の設定
-        gb.configure_default_column(sortable=True, filterable=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("降順", key="team_ratings_desc", use_container_width=True):
+                st.session_state.team_ratings_sort_col = sort_column
+                st.session_state.team_ratings_ascending = False
+        with col2:
+            if st.button("昇順", key="team_ratings_asc", use_container_width=True):
+                st.session_state.team_ratings_sort_col = sort_column
+                st.session_state.team_ratings_ascending = True
 
-        # 数値フォーマット設定
-        gb.configure_column("OFF_RATING", header_name="Off Rtg", type=["numericColumn"], precision=1)
-        gb.configure_column("DEF_RATING", header_name="Def Rtg", type=["numericColumn"], precision=1)
-        gb.configure_column("NET_RATING", header_name="Net Rtg", type=["numericColumn"], precision=1)
-
-        gridOptions = gb.build()
-
-        AgGrid(
-            team_ratings,
-            gridOptions=gridOptions,
-            update_mode=GridUpdateMode.NO_UPDATE,
-            fit_columns_on_grid_load=True,
-            height=500,
-            enable_enterprise_modules=False,
+        # ソート実行
+        team_ratings_sorted = team_ratings.sort_values(
+            by=st.session_state.team_ratings_sort_col,
+            ascending=st.session_state.team_ratings_ascending
         )
+
+        # ソート後に行数番号列を追加
+        team_ratings_sorted.insert(0, 'No.', range(1, len(team_ratings_sorted) + 1))
+
+        # 数値フォーマットを適用
+        for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+            if col in team_ratings_sorted.columns:
+                team_ratings_sorted[col] = team_ratings_sorted[col].apply(lambda x: f"{x:.1f}")
+
+        # 列名を変更
+        team_ratings_sorted = team_ratings_sorted.rename(columns={
+            'OFF_RATING': 'Off Rtg',
+            'DEF_RATING': 'Def Rtg',
+            'NET_RATING': 'Net Rtg'
+        })
+
+        st.table(team_ratings_sorted.set_index('No.'))
     else:
         st.warning("表示できるチームデータがありません。")
 
@@ -60,47 +66,54 @@ def display_team_players(nba_manager):
             team_players = nba_manager.get_player_ratings(team_name=selected_team)
 
             if not team_players.empty:
-                # 行番号列を先頭に追加
-                team_players.insert(0, 'No.', range(1, len(team_players) + 1))
+                # session_stateの初期化
+                if 'team_players_sort_col' not in st.session_state:
+                    st.session_state.team_players_sort_col = team_players.columns[0]
+                if 'team_players_ascending' not in st.session_state:
+                    st.session_state.team_players_ascending = False
 
-                # AG Grid設定
-                gb = GridOptionsBuilder.from_dataframe(team_players)
-
-                # 行番号列の設定（ソート後も1から順に表示）
-                row_number_jscode = JsCode("""
-                function(params) {
-                    return params.node.rowIndex + 1;
-                }
-                """)
-
-                gb.configure_column(
-                    "No.",
-                    headerName="No.",
-                    valueGetter=row_number_jscode,
-                    lockPosition=True,
-                    sortable=False,
-                    width=80,
-                    suppressMovable=True
+                # ソート機能
+                st.write("**並び替え列を選択:**")
+                sort_column = st.radio(
+                    "並び替え列",
+                    options=team_players.columns.tolist(),
+                    horizontal=True,
+                    key="team_players_radio",
+                    label_visibility="collapsed"
                 )
 
-                # 他の列の設定
-                gb.configure_default_column(sortable=True, filterable=True)
+                col1, col2 = st.columns(2)
+                with col1:
+                    if st.button("降順", key="team_players_desc", use_container_width=True):
+                        st.session_state.team_players_sort_col = sort_column
+                        st.session_state.team_players_ascending = False
+                with col2:
+                    if st.button("昇順", key="team_players_asc", use_container_width=True):
+                        st.session_state.team_players_sort_col = sort_column
+                        st.session_state.team_players_ascending = True
 
-                # 数値フォーマット設定
-                gb.configure_column("OFF_RATING", header_name="Off Rtg", type=["numericColumn"], precision=1)
-                gb.configure_column("DEF_RATING", header_name="Def Rtg", type=["numericColumn"], precision=1)
-                gb.configure_column("NET_RATING", header_name="Net Rtg", type=["numericColumn"], precision=1)
-
-                gridOptions = gb.build()
-
-                AgGrid(
-                    team_players,
-                    gridOptions=gridOptions,
-                    update_mode=GridUpdateMode.NO_UPDATE,
-                    fit_columns_on_grid_load=True,
-                    height=500,
-                    enable_enterprise_modules=False,
+                # ソート実行
+                team_players_sorted = team_players.sort_values(
+                    by=st.session_state.team_players_sort_col,
+                    ascending=st.session_state.team_players_ascending
                 )
+
+                # ソート後に行数番号列を追加
+                team_players_sorted.insert(0, 'No.', range(1, len(team_players_sorted) + 1))
+
+                # 数値フォーマットを適用
+                for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+                    if col in team_players_sorted.columns:
+                        team_players_sorted[col] = team_players_sorted[col].apply(lambda x: f"{x:.1f}")
+
+                # 列名を変更
+                team_players_sorted = team_players_sorted.rename(columns={
+                    'OFF_RATING': 'Off Rtg',
+                    'DEF_RATING': 'Def Rtg',
+                    'NET_RATING': 'Net Rtg'
+                })
+
+                st.table(team_players_sorted.set_index('No.'))
             else:
                 st.warning(f"{selected_team}の選手データが見つかりませんでした。")
     except Exception as e:
@@ -123,42 +136,54 @@ def display_player_search(nba_manager):
         results = nba_manager.search_players(search_names)
 
         if not results.empty:
-            # 行番号列を先頭に追加
-            results.insert(0, 'No.', range(1, len(results) + 1))
+            # session_stateの初期化
+            if 'player_search_sort_col' not in st.session_state:
+                st.session_state.player_search_sort_col = results.columns[0]
+            if 'player_search_ascending' not in st.session_state:
+                st.session_state.player_search_ascending = False
 
-            # AG Grid設定
-            gb = GridOptionsBuilder.from_dataframe(results)
-
-            # 行番号列の設定（ソート後も1から順に表示）
-            row_number_jscode = JsCode("""
-            function(params) {
-                return params.node.rowIndex + 1;
-            }
-            """)
-
-            gb.configure_column(
-                "No.",
-                headerName="No.",
-                valueGetter=row_number_jscode,
-                lockPosition=True,
-                sortable=False,
-                width=80,
-                suppressMovable=True
+            # ソート機能
+            st.write("**並び替え列を選択:**")
+            sort_column = st.radio(
+                "並び替え列",
+                options=results.columns.tolist(),
+                horizontal=True,
+                key="player_search_radio",
+                label_visibility="collapsed"
             )
 
-            # 他の列の設定
-            gb.configure_default_column(sortable=True, filterable=True)
+            col1, col2 = st.columns(2)
+            with col1:
+                if st.button("降順", key="player_search_desc", use_container_width=True):
+                    st.session_state.player_search_sort_col = sort_column
+                    st.session_state.player_search_ascending = False
+            with col2:
+                if st.button("昇順", key="player_search_asc", use_container_width=True):
+                    st.session_state.player_search_sort_col = sort_column
+                    st.session_state.player_search_ascending = True
 
-            gridOptions = gb.build()
-
-            AgGrid(
-                results,
-                gridOptions=gridOptions,
-                update_mode=GridUpdateMode.NO_UPDATE,
-                fit_columns_on_grid_load=True,
-                height=500,
-                enable_enterprise_modules=False,
+            # ソート実行
+            results_sorted = results.sort_values(
+                by=st.session_state.player_search_sort_col,
+                ascending=st.session_state.player_search_ascending
             )
+
+            # ソート後に行数番号列を追加
+            results_sorted.insert(0, 'No.', range(1, len(results_sorted) + 1))
+
+            # 数値フォーマットを適用
+            for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+                if col in results_sorted.columns:
+                    results_sorted[col] = results_sorted[col].apply(lambda x: f"{x:.1f}")
+
+            # 列名を変更
+            results_sorted = results_sorted.rename(columns={
+                'OFF_RATING': 'Off Rtg',
+                'DEF_RATING': 'Def Rtg',
+                'NET_RATING': 'Net Rtg'
+            })
+
+            st.table(results_sorted.set_index('No.'))
         else:
             st.warning("該当する選手が見つかりませんでした。")
 
@@ -169,44 +194,51 @@ def display_all_players(nba_manager):
     all_players = nba_manager.get_player_ratings(min_games=20)
 
     if not all_players.empty:
-        # 行番号列を先頭に追加
-        all_players.insert(0, 'No.', range(1, len(all_players) + 1))
+        # session_stateの初期化
+        if 'all_players_sort_col' not in st.session_state:
+            st.session_state.all_players_sort_col = all_players.columns[0]
+        if 'all_players_ascending' not in st.session_state:
+            st.session_state.all_players_ascending = False
 
-        # AG Grid設定
-        gb = GridOptionsBuilder.from_dataframe(all_players)
-
-        # 行番号列の設定（ソート後も1から順に表示）
-        row_number_jscode = JsCode("""
-        function(params) {
-            return params.node.rowIndex + 1;
-        }
-        """)
-
-        gb.configure_column(
-            "No.",
-            headerName="No.",
-            valueGetter=row_number_jscode,
-            lockPosition=True,
-            sortable=False,
-            width=80,
-            suppressMovable=True
+        # ソート機能
+        st.write("**並び替え列を選択:**")
+        sort_column = st.radio(
+            "並び替え列",
+            options=all_players.columns.tolist(),
+            horizontal=True,
+            key="all_players_radio",
+            label_visibility="collapsed"
         )
 
-        # 他の列の設定
-        gb.configure_default_column(sortable=True, filterable=True)
+        col1, col2 = st.columns(2)
+        with col1:
+            if st.button("降順", key="all_players_desc", use_container_width=True):
+                st.session_state.all_players_sort_col = sort_column
+                st.session_state.all_players_ascending = False
+        with col2:
+            if st.button("昇順", key="all_players_asc", use_container_width=True):
+                st.session_state.all_players_sort_col = sort_column
+                st.session_state.all_players_ascending = True
 
-        # 数値フォーマット設定
-        gb.configure_column("OFF_RATING", header_name="Off Rtg", type=["numericColumn"], precision=1)
-        gb.configure_column("DEF_RATING", header_name="Def Rtg", type=["numericColumn"], precision=1)
-        gb.configure_column("NET_RATING", header_name="Net Rtg", type=["numericColumn"], precision=1)
-
-        gridOptions = gb.build()
-
-        AgGrid(
-            all_players,
-            gridOptions=gridOptions,
-            update_mode=GridUpdateMode.NO_UPDATE,
-            fit_columns_on_grid_load=True,
-            height=500,
-            enable_enterprise_modules=False,
+        # ソート実行
+        all_players_sorted = all_players.sort_values(
+            by=st.session_state.all_players_sort_col,
+            ascending=st.session_state.all_players_ascending
         )
+
+        # ソート後に行数番号列を追加
+        all_players_sorted.insert(0, 'No.', range(1, len(all_players_sorted) + 1))
+
+        # 数値フォーマットを適用
+        for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+            if col in all_players_sorted.columns:
+                all_players_sorted[col] = all_players_sorted[col].apply(lambda x: f"{x:.1f}")
+
+        # 列名を変更
+        all_players_sorted = all_players_sorted.rename(columns={
+            'OFF_RATING': 'Off Rtg',
+            'DEF_RATING': 'Def Rtg',
+            'NET_RATING': 'Net Rtg'
+        })
+
+        st.table(all_players_sorted.set_index('No.'))
