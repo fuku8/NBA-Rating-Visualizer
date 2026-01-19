@@ -2,8 +2,8 @@ name: Update NBA Data
 
 on:
   schedule:
-    # 毎日午前9時（UTC 0時）に実行
-    - cron: '0 0 * * *'
+    # 毎日午前3時（UTC 18時）に実行 - NBA API負荷が低い時間帯
+    - cron: '0 18 * * *'
   workflow_dispatch:  # 手動実行も可能
 
 jobs:
