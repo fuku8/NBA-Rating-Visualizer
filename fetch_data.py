@@ -3,23 +3,37 @@
 定期的に実行してデータを更新し、GitHubにプッシュすることでStreamlit Cloudでも最新データを利用可能
 """
 from nba_api.stats.endpoints import leaguedashteamstats, leaguedashplayerstats
+from nba_api.stats.static import teams
 import pandas as pd
 from datetime import datetime
 import time
 
-def fetch_with_retry(fetch_func, max_retries=3, retry_delay=5):
+# NBA APIのデフォルトヘッダーを設定
+from nba_api.stats.library.http import NBAStatsHTTP
+NBAStatsHTTP.headers = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Origin': 'https://www.nba.com',
+    'Referer': 'https://www.nba.com/',
+    'Connection': 'keep-alive',
+}
+
+def fetch_with_retry(fetch_func, max_retries=3, retry_delay=10):
     """リトライロジック付きでデータ取得を実行"""
     for attempt in range(max_retries):
         try:
             if attempt > 0:
                 print(f"  リトライ {attempt}/{max_retries-1}...")
-                time.sleep(retry_delay)
+                time.sleep(retry_delay * attempt)  # 段階的に待機時間を延長
             return fetch_func()
         except Exception as e:
             if attempt == max_retries - 1:
                 raise
             print(f"  エラー発生: {e}")
-            print(f"  {retry_delay}秒後に再試行します...")
+            wait_time = retry_delay * (attempt + 1)
+            print(f"  {wait_time}秒後に再試行します...")
     return None
 
 def fetch_and_save_data():
@@ -51,7 +65,11 @@ def fetch_and_save_data():
         print(f"✗ チームデータ取得エラー（最大試行回数超過）: {e}")
         return False
 
-    print("\n選手データを取得中...")
+    # API負荷軽減のため少し待機
+    print("\n3秒待機中...")
+    time.sleep(3)
+
+    print("選手データを取得中...")
     try:
         def fetch_player_data():
             player_stats = leaguedashplayerstats.LeagueDashPlayerStats(
