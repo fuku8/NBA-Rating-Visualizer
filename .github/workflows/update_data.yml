@@ -21,7 +21,7 @@ jobs:
         
     - name: Install dependencies
       run: |
-        pip install nba-api pandas
+        pip install -r requirements.txt
         
     - name: Fetch NBA data
       run: |
