@@ -2,8 +2,8 @@ name: Update NBA Data
 
 on:
   schedule:
-    # 毎日午後4時（日本時間、UTC 7時）に実行
-    - cron: '0 7 * * *'
+    # 毎日午後4時22分（日本時間、UTC 7時22分）に実行
+    - cron: '22 7 * * *'
   workflow_dispatch:  # 手動実行も可能
 
 jobs:
