@@ -36,9 +36,9 @@ class NBADataManager:
             self.last_updated = "エラー"
     
     def get_team_id(self, team_name):
-        """チーム名からチームIDを取得"""
+        """チーム名からチーム略称を取得（Basketball Reference形式）"""
         team = next((team for team in self._teams if team['full_name'] == team_name), None)
-        return team['id'] if team else None
+        return team['abbreviation'] if team else None
     
     def get_team_ratings(self):
         """チームのレーティングデータを取得"""

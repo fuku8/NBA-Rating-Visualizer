@@ -5,6 +5,13 @@ def display_team_ratings(nba_manager):
     team_ratings = nba_manager.get_team_ratings()
 
     if not team_ratings.empty:
+        # 列名を先に変更（Basketball ReferenceのRating指標を使用）
+        team_ratings = team_ratings.rename(columns={
+            'OFF_RATING': 'ORtg',
+            'DEF_RATING': 'DRtg',
+            'NET_RATING': 'NRtg'
+        })
+
         # session_stateの初期化
         if 'team_ratings_sort_col' not in st.session_state:
             st.session_state.team_ratings_sort_col = team_ratings.columns[0]
@@ -41,16 +48,9 @@ def display_team_ratings(nba_manager):
         team_ratings_sorted.insert(0, 'No.', range(1, len(team_ratings_sorted) + 1))
 
         # 数値フォーマットを適用
-        for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+        for col in ['ORtg', 'DRtg', 'NRtg']:
             if col in team_ratings_sorted.columns:
                 team_ratings_sorted[col] = team_ratings_sorted[col].apply(lambda x: f"{x:.1f}")
-
-        # 列名を変更
-        team_ratings_sorted = team_ratings_sorted.rename(columns={
-            'OFF_RATING': 'Off Rtg',
-            'DEF_RATING': 'Def Rtg',
-            'NET_RATING': 'Net Rtg'
-        })
 
         st.table(team_ratings_sorted.set_index('No.'))
     else:
@@ -66,6 +66,13 @@ def display_team_players(nba_manager):
             team_players = nba_manager.get_player_ratings(team_name=selected_team)
 
             if not team_players.empty:
+                # 列名を先に変更（Basketball ReferenceのWin Shares指標を使用）
+                team_players = team_players.rename(columns={
+                    'OFF_RATING': 'OWS',
+                    'DEF_RATING': 'DWS',
+                    'NET_RATING': 'WS'
+                })
+
                 # session_stateの初期化
                 if 'team_players_sort_col' not in st.session_state:
                     st.session_state.team_players_sort_col = team_players.columns[0]
@@ -102,16 +109,9 @@ def display_team_players(nba_manager):
                 team_players_sorted.insert(0, 'No.', range(1, len(team_players_sorted) + 1))
 
                 # 数値フォーマットを適用
-                for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+                for col in ['OWS', 'DWS', 'WS']:
                     if col in team_players_sorted.columns:
                         team_players_sorted[col] = team_players_sorted[col].apply(lambda x: f"{x:.1f}")
-
-                # 列名を変更
-                team_players_sorted = team_players_sorted.rename(columns={
-                    'OFF_RATING': 'Off Rtg',
-                    'DEF_RATING': 'Def Rtg',
-                    'NET_RATING': 'Net Rtg'
-                })
 
                 st.table(team_players_sorted.set_index('No.'))
             else:
@@ -136,54 +136,22 @@ def display_player_search(nba_manager):
         results = nba_manager.search_players(search_names)
 
         if not results.empty:
-            # session_stateの初期化
-            if 'player_search_sort_col' not in st.session_state:
-                st.session_state.player_search_sort_col = results.columns[0]
-            if 'player_search_ascending' not in st.session_state:
-                st.session_state.player_search_ascending = False
-
-            # ソート機能
-            st.write("**並び替え列を選択:**")
-            sort_column = st.radio(
-                "並び替え列",
-                options=results.columns.tolist(),
-                horizontal=True,
-                key="player_search_radio",
-                label_visibility="collapsed"
-            )
-
-            col1, col2 = st.columns(2)
-            with col1:
-                if st.button("降順", key="player_search_desc", use_container_width=True):
-                    st.session_state.player_search_sort_col = sort_column
-                    st.session_state.player_search_ascending = False
-            with col2:
-                if st.button("昇順", key="player_search_asc", use_container_width=True):
-                    st.session_state.player_search_sort_col = sort_column
-                    st.session_state.player_search_ascending = True
-
-            # ソート実行
-            results_sorted = results.sort_values(
-                by=st.session_state.player_search_sort_col,
-                ascending=st.session_state.player_search_ascending
-            )
-
-            # ソート後に行数番号列を追加
-            results_sorted.insert(0, 'No.', range(1, len(results_sorted) + 1))
-
-            # 数値フォーマットを適用
-            for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
-                if col in results_sorted.columns:
-                    results_sorted[col] = results_sorted[col].apply(lambda x: f"{x:.1f}")
-
-            # 列名を変更
-            results_sorted = results_sorted.rename(columns={
-                'OFF_RATING': 'Off Rtg',
-                'DEF_RATING': 'Def Rtg',
-                'NET_RATING': 'Net Rtg'
+            # 列名を先に変更（Basketball ReferenceのWin Shares指標を使用）
+            results = results.rename(columns={
+                'OFF_RATING': 'OWS',
+                'DEF_RATING': 'DWS',
+                'NET_RATING': 'WS'
             })
 
-            st.table(results_sorted.set_index('No.'))
+            # 行数番号列を追加
+            results.insert(0, 'No.', range(1, len(results) + 1))
+
+            # 数値フォーマットを適用
+            for col in ['OWS', 'DWS', 'WS']:
+                if col in results.columns:
+                    results[col] = results[col].apply(lambda x: f"{x:.1f}")
+
+            st.table(results.set_index('No.'))
         else:
             st.warning("該当する選手が見つかりませんでした。")
 
@@ -194,6 +162,13 @@ def display_all_players(nba_manager):
     all_players = nba_manager.get_player_ratings(min_games=20)
 
     if not all_players.empty:
+        # 列名を先に変更（Basketball ReferenceのWin Shares指標を使用）
+        all_players = all_players.rename(columns={
+            'OFF_RATING': 'OWS',
+            'DEF_RATING': 'DWS',
+            'NET_RATING': 'WS'
+        })
+
         # session_stateの初期化
         if 'all_players_sort_col' not in st.session_state:
             st.session_state.all_players_sort_col = all_players.columns[0]
@@ -230,15 +205,10 @@ def display_all_players(nba_manager):
         all_players_sorted.insert(0, 'No.', range(1, len(all_players_sorted) + 1))
 
         # 数値フォーマットを適用
-        for col in ['OFF_RATING', 'DEF_RATING', 'NET_RATING']:
+        for col in ['OWS', 'DWS', 'WS']:
             if col in all_players_sorted.columns:
                 all_players_sorted[col] = all_players_sorted[col].apply(lambda x: f"{x:.1f}")
 
-        # 列名を変更
-        all_players_sorted = all_players_sorted.rename(columns={
-            'OFF_RATING': 'Off Rtg',
-            'DEF_RATING': 'Def Rtg',
-            'NET_RATING': 'Net Rtg'
-        })
-
         st.table(all_players_sorted.set_index('No.'))
+    else:
+        st.warning("表示できる選手データがありません。")
