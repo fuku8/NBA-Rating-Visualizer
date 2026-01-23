@@ -113,6 +113,10 @@ def display_team_players(nba_manager):
                     if col in team_players_sorted.columns:
                         team_players_sorted[col] = team_players_sorted[col].apply(lambda x: f"{x:.1f}")
 
+                # GPは整数表示
+                if 'GP' in team_players_sorted.columns:
+                    team_players_sorted['GP'] = team_players_sorted['GP'].apply(lambda x: f"{int(x)}")
+
                 st.table(team_players_sorted.set_index('No.'))
             else:
                 st.warning(f"{selected_team}の選手データが見つかりませんでした。")
@@ -150,6 +154,10 @@ def display_player_search(nba_manager):
             for col in ['OWS', 'DWS', 'WS']:
                 if col in results.columns:
                     results[col] = results[col].apply(lambda x: f"{x:.1f}")
+
+            # GPは整数表示
+            if 'GP' in results.columns:
+                results['GP'] = results['GP'].apply(lambda x: f"{int(x)}")
 
             st.table(results.set_index('No.'))
         else:
@@ -208,6 +216,10 @@ def display_all_players(nba_manager):
         for col in ['OWS', 'DWS', 'WS']:
             if col in all_players_sorted.columns:
                 all_players_sorted[col] = all_players_sorted[col].apply(lambda x: f"{x:.1f}")
+
+        # GPは整数表示
+        if 'GP' in all_players_sorted.columns:
+            all_players_sorted['GP'] = all_players_sorted['GP'].apply(lambda x: f"{int(x)}")
 
         st.table(all_players_sorted.set_index('No.'))
     else:
