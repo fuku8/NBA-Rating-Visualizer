@@ -58,6 +58,17 @@ def display_team_ratings(nba_manager):
 
 def display_team_players(nba_manager):
     """チーム別選手レーティングの表示"""
+    # 指標の説明を表示
+    with st.expander("📊 指標の説明", expanded=False):
+        st.markdown("""
+        **Win Shares (WS)** - 選手がチームの勝利にどれだけ貢献したかを示す指標
+
+        - **OWS (Offensive Win Shares)**: オフェンス面での貢献度。得点、アシスト、効率的なシュート選択などが評価されます
+        - **DWS (Defensive Win Shares)**: ディフェンス面での貢献度。相手の得点を防ぐ能力、リバウンド、スティールなどが評価されます
+        - **WS (Win Shares)**: OWSとDWSを合計した総合的な貢献度。値が高いほどチームの勝利に貢献していることを示します
+        - **GP (Games Played)**: シーズン中にプレイした試合数
+        """)
+
     try:
         teams = [team['full_name'] for team in nba_manager._teams]
         selected_team = st.selectbox("チームを選択", teams)
@@ -125,6 +136,17 @@ def display_team_players(nba_manager):
 
 def display_player_search(nba_manager):
     """選手検索機能の表示"""
+    # 指標の説明を表示
+    with st.expander("📊 指標の説明", expanded=False):
+        st.markdown("""
+        **Win Shares (WS)** - 選手がチームの勝利にどれだけ貢献したかを示す指標
+
+        - **OWS (Offensive Win Shares)**: オフェンス面での貢献度。得点、アシスト、効率的なシュート選択などが評価されます
+        - **DWS (Defensive Win Shares)**: ディフェンス面での貢献度。相手の得点を防ぐ能力、リバウンド、スティールなどが評価されます
+        - **WS (Win Shares)**: OWSとDWSを合計した総合的な貢献度。値が高いほどチームの勝利に貢献していることを示します
+        - **GP (Games Played)**: シーズン中にプレイした試合数
+        """)
+
     st.info("選手名の一部を入力してください（複数入力可）")
 
     # UI改善: 検索フォームをまとめる
@@ -165,6 +187,17 @@ def display_player_search(nba_manager):
 
 def display_all_players(nba_manager):
     """全選手レーティングの表示"""
+    # 指標の説明を表示
+    with st.expander("📊 指標の説明", expanded=False):
+        st.markdown("""
+        **Win Shares (WS)** - 選手がチームの勝利にどれだけ貢献したかを示す指標
+
+        - **OWS (Offensive Win Shares)**: オフェンス面での貢献度。得点、アシスト、効率的なシュート選択などが評価されます
+        - **DWS (Defensive Win Shares)**: ディフェンス面での貢献度。相手の得点を防ぐ能力、リバウンド、スティールなどが評価されます
+        - **WS (Win Shares)**: OWSとDWSを合計した総合的な貢献度。値が高いほどチームの勝利に貢献していることを示します
+        - **GP (Games Played)**: シーズン中にプレイした試合数
+        """)
+
     # 全選手表示は重いため、注意書きを入れるか、ページネーション的な工夫があると良いが、一旦そのまま表示
     st.warning("注: 全選手のデータを取得・表示するため時間がかかる場合があります。")
     all_players = nba_manager.get_player_ratings(min_games=20)
