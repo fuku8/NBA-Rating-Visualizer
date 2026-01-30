@@ -4,7 +4,7 @@ Basketball Referenceから2025-26シーズンのNBAデータを取得してCSV�
 """
 import pandas as pd
 import requests
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import time
 import os
 
@@ -146,7 +146,8 @@ def fetch_basketball_reference_data():
 
     # 更新日時を記録
     with open('data/last_updated.txt', 'w') as f:
-        f.write(datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        jst = timezone(timedelta(hours=9))
+        f.write(datetime.now(jst).strftime('%Y-%m-%d %H:%M:%S'))
 
     print("\n✓ すべてのデータ取得が完了しました")
     return True
