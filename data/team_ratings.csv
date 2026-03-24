@@ -1,24 +1,24 @@
 TEAM_NAME,OFF_RATING,DEF_RATING,NET_RATING
 Oklahoma City Thunder,118.4,107.3,11.1
 Detroit Pistons,117.5,109.6,7.9
-Boston Celtics,120.5,112.7,7.8
+Boston Celtics,120.1,112.6,7.5
 San Antonio Spurs,118.8,111.5,7.3
-New York Knicks,119.3,112.7,6.6
-Denver Nuggets,121.5,117.2,4.3
+New York Knicks,119.7,112.7,7.0
+Denver Nuggets,121.6,117.1,4.5
 Charlotte Hornets,118.9,114.7,4.2
 Cleveland Cavaliers,118.5,114.3,4.2
 Houston Rockets,117.6,113.4,4.2
-Minnesota Timberwolves,117.5,113.7,3.8
+Minnesota Timberwolves,117.3,113.4,3.9
 Miami Heat,116.0,113.0,3.0
-Toronto Raptors,115.2,113.1,2.1
+Toronto Raptors,115.0,113.3,1.7
 Los Angeles Lakers,118.2,116.7,1.5
 Atlanta Hawks,115.3,114.0,1.3
-Phoenix Suns,115.1,114.1,1.0
+Phoenix Suns,115.2,113.9,1.3
 Orlando Magic,114.9,113.9,1.0
 Los Angeles Clippers,117.1,116.5,0.6
 Golden State Warriors,114.9,114.8,0.1
 Philadelphia 76ers,115.2,115.6,-0.4
-Portland Trail Blazers,113.8,115.8,-2.0
+Portland Trail Blazers,113.8,115.9,-2.1
 Memphis Grizzlies,113.8,117.0,-3.2
 New Orleans Pelicans,114.6,118.2,-3.6
 Chicago Bulls,113.3,117.6,-4.3
@@ -26,6 +26,6 @@ Dallas Mavericks,110.9,116.0,-5.1
 Milwaukee Bucks,113.1,118.4,-5.3
 Utah Jazz,114.5,121.9,-7.4
 Indiana Pacers,110.1,119.0,-8.9
-Brooklyn Nets,109.2,118.7,-9.5
-Sacramento Kings,110.7,120.9,-10.2
-Washington Wizards,110.8,122.0,-11.2
+Brooklyn Nets,109.5,118.9,-9.4
+Sacramento Kings,111.0,121.0,-10.0
+Washington Wizards,110.9,122.3,-11.4
